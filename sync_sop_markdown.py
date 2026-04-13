@@ -13,9 +13,16 @@ ROOT = Path(__file__).resolve().parent
 DEFAULT_HTML = ROOT / "AI视频全流程生产SOP（通用版 V 1.0）.html"
 DEFAULT_PUBLIC_HTML = ROOT / "index.html"
 DEFAULT_MD = ROOT / "AI视频全流程生产SOP（通用版 V 1.0）.md"
+DEFAULT_TUTORIALS_DIR = ROOT / "tutorials"
 
 SCRIPT_TAG_RE = re.compile(
     r'(<script id="md-source" type="text/plain">)(.*?)(</script>)',
+    re.DOTALL,
+)
+TITLE_TAG_RE = re.compile(r"(<title>)(.*?)(</title>)", re.DOTALL)
+FIRST_H1_RE = re.compile(r"^\s*#\s+(.+?)\s*$", re.MULTILINE)
+TUTORIAL_LAYOUT_RE = re.compile(
+    r"\s*<section class=\"hero\">.*?</section>\s*<section class=\"overview-grid\" aria-label=\"文档导览\">.*?</section>",
     re.DOTALL,
 )
 
@@ -47,6 +54,22 @@ def inject_markdown_into_html(html_text: str, markdown: str) -> str:
     normalized = markdown.rstrip()
     replacement = f"{match.group(1)}{normalized}{match.group(3)}"
     return SCRIPT_TAG_RE.sub(replacement, html_text, count=1)
+
+
+def extract_title(markdown: str, fallback: str) -> str:
+    match = FIRST_H1_RE.search(markdown)
+    if not match:
+        return fallback
+    return match.group(1).strip()
+
+
+def inject_title_into_html(html_text: str, title: str) -> str:
+    replacement = f"{title}"
+    return TITLE_TAG_RE.sub(rf"\1{replacement}\3", html_text, count=1)
+
+
+def build_tutorial_template(html_text: str) -> str:
+    return TUTORIAL_LAYOUT_RE.sub("", html_text, count=1)
 
 
 def export_html_to_md(html_path: Path, md_path: Path) -> bool:
@@ -84,6 +107,35 @@ def sync_md_to_htmls(md_path: Path, html_paths: list[Path]) -> bool:
         template = primary_template if index > 0 else None
         changed = sync_md_to_html(md_path, html_path, template_html_text=template)
         changed_any = changed_any or changed
+
+    return changed_any
+
+
+def sync_tutorials(tutorials_dir: Path, base_html_path: Path) -> bool:
+    if not tutorials_dir.exists():
+        return False
+
+    tutorial_md_files = sorted(
+        path
+        for path in tutorials_dir.glob("*.md")
+        if path.name.lower() != "readme.md"
+    )
+    if not tutorial_md_files:
+        return False
+
+    tutorial_template = build_tutorial_template(read_text(base_html_path))
+    changed_any = False
+
+    for md_path in tutorial_md_files:
+        html_path = md_path.with_suffix(".html")
+        markdown = read_text(md_path)
+        new_html = inject_markdown_into_html(tutorial_template, markdown)
+        new_html = inject_title_into_html(new_html, extract_title(markdown, md_path.stem))
+        previous = read_text(html_path) if html_path.exists() else None
+        if previous == new_html:
+            continue
+        write_text(html_path, new_html)
+        changed_any = True
 
     return changed_any
 
@@ -140,6 +192,12 @@ def parse_args() -> argparse.Namespace:
         default=DEFAULT_PUBLIC_HTML,
         help="部署用首页 HTML 文件路径，默认 index.html",
     )
+    parser.add_argument(
+        "--tutorials-dir",
+        type=Path,
+        default=DEFAULT_TUTORIALS_DIR,
+        help="项目实际教程 Markdown 所在目录，默认 tutorials/",
+    )
     return parser.parse_args()
 
 
@@ -148,6 +206,7 @@ def main() -> int:
     html_path = args.html.resolve()
     public_html_path = args.public_html.resolve()
     md_path = args.md.resolve()
+    tutorials_dir = args.tutorials_dir.resolve()
     html_paths = [html_path]
 
     if public_html_path != html_path:
@@ -167,7 +226,8 @@ def main() -> int:
         return 0
 
     changed = sync_md_to_htmls(md_path, html_paths)
-    print("HTML files updated." if changed else "HTML already up to date.")
+    tutorial_changed = sync_tutorials(tutorials_dir, html_path)
+    print("HTML files updated." if (changed or tutorial_changed) else "HTML already up to date.")
     return 0
 
 

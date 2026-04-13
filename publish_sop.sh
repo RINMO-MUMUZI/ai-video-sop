@@ -7,6 +7,7 @@ MD_FILE="AI视频全流程生产SOP（通用版 V 1.0）.md"
 HTML_FILE="AI视频全流程生产SOP（通用版 V 1.0）.html"
 PUBLIC_HTML_FILE="index.html"
 SYNC_SCRIPT="sync_sop_markdown.py"
+TUTORIALS_DIR="tutorials"
 
 COMMIT_MESSAGE="${1:-update SOP site}"
 
@@ -24,14 +25,30 @@ fi
 
 python3 "$SYNC_SCRIPT" --md "$MD_FILE" --html "$HTML_FILE" --public-html "$PUBLIC_HTML_FILE"
 
-if [[ -z "$(git status --short -- "$MD_FILE" "$HTML_FILE" "$PUBLIC_HTML_FILE")" ]]; then
+shopt -s nullglob
+
+FILES_TO_TRACK=(
+  "$MD_FILE"
+  "$HTML_FILE"
+  "$PUBLIC_HTML_FILE"
+  "$SYNC_SCRIPT"
+  "${BASH_SOURCE[0]##*/}"
+)
+
+if [[ -d "$TUTORIALS_DIR" ]]; then
+  for file in "$TUTORIALS_DIR"/*.md "$TUTORIALS_DIR"/*.html; do
+    FILES_TO_TRACK+=("$file")
+  done
+fi
+
+if [[ -z "$(git status --short -- "${FILES_TO_TRACK[@]}")" ]]; then
   echo "SOP 内容没有变化，无需发布。"
   exit 0
 fi
 
-git add -- "$MD_FILE" "$HTML_FILE" "$PUBLIC_HTML_FILE"
+git add -- "${FILES_TO_TRACK[@]}"
 
-if git diff --cached --quiet -- "$MD_FILE" "$HTML_FILE" "$PUBLIC_HTML_FILE"; then
+if git diff --cached --quiet -- "${FILES_TO_TRACK[@]}"; then
   echo "没有可提交的 SOP 变更。"
   exit 0
 fi
