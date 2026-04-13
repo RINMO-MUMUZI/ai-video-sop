@@ -82,17 +82,25 @@ def export_html_to_md(html_path: Path, md_path: Path) -> bool:
     return True
 
 
-def sync_md_to_html(md_path: Path, html_path: Path, template_html_text: str | None = None) -> bool:
+def sync_md_to_html(
+    md_path: Path,
+    html_path: Path,
+    template_html_text: str | None = None,
+    prefer_template: bool = False,
+) -> bool:
     markdown = read_text(md_path)
     html_exists = html_path.exists()
-    if html_exists:
+    if template_html_text is not None and prefer_template:
+        html_text = template_html_text
+    elif html_exists:
         html_text = read_text(html_path)
     elif template_html_text is not None:
         html_text = template_html_text
     else:
         raise FileNotFoundError(f"HTML 模板不存在：{html_path}")
     new_html = inject_markdown_into_html(html_text, markdown)
-    if html_exists and new_html == html_text:
+    previous = read_text(html_path) if html_exists else None
+    if previous == new_html:
         return False
     write_text(html_path, new_html)
     return True
@@ -105,7 +113,12 @@ def sync_md_to_htmls(md_path: Path, html_paths: list[Path]) -> bool:
 
     for index, html_path in enumerate(html_paths):
         template = primary_template if index > 0 else None
-        changed = sync_md_to_html(md_path, html_path, template_html_text=template)
+        changed = sync_md_to_html(
+            md_path,
+            html_path,
+            template_html_text=template,
+            prefer_template=index > 0,
+        )
         changed_any = changed_any or changed
 
     return changed_any

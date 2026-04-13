@@ -67,7 +67,10 @@
 
 这一章按实际制作顺序展开，开工后可以直接按阶段往下看。
 
-配套教程：`Lib TV` 使用教程可参考 [飞书文档](https://resonate.feishu.cn/wiki/Loxfw6XHziYRk0kKzdjcFfp9nhb?from=from_copylink)。
+配套教程：
+- `Lib TV` 使用教程：[飞书文档](https://resonate.feishu.cn/wiki/Loxfw6XHziYRk0kKzdjcFfp9nhb?from=from_copylink)
+- `即梦 Seedance 2.0` 教程：[飞书文档](https://bytedance.larkoffice.com/wiki/A5RHwWhoBiOnjukIIw6cu5ybnXQ?from=from_copylink)
+- `可灵 O3` 教程：[轻雀文档](https://docs.qingque.cn/d/home/eZQAit38w9iv2rOZ3k0CXYYn-?identityId=2Ha76zGX5gS)
 
 ### 1. 分镜脚本
 

@@ -413,6 +413,199 @@
       text-align: center;
     }
 
+    .feedback-fab {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 1200;
+    }
+
+    .feedback-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #45c62f, #2aa36d);
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      box-shadow: 0 18px 40px rgba(23, 62, 75, 0.24);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    }
+
+    .feedback-trigger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 22px 44px rgba(23, 62, 75, 0.28);
+    }
+
+    .feedback-trigger:active {
+      transform: translateY(0);
+    }
+
+    .feedback-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1190;
+      background: rgba(15, 23, 42, 0.42);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
+    }
+
+    .feedback-panel {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: min(460px, calc(100vw - 24px));
+      height: min(760px, calc(100vh - 48px));
+      display: flex;
+      flex-direction: column;
+      background: rgba(255, 255, 255, 0.98);
+      border: 1px solid rgba(233, 238, 245, 0.9);
+      border-radius: 24px;
+      box-shadow: 0 24px 56px rgba(15, 23, 42, 0.18);
+      overflow: hidden;
+      transform: translateY(16px) scale(0.98);
+      transition: transform 0.22s ease;
+    }
+
+    .feedback-overlay.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .feedback-overlay.is-open .feedback-panel {
+      transform: translateY(0) scale(1);
+    }
+
+    body.feedback-open {
+      overflow: hidden;
+    }
+
+    .feedback-header {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .feedback-header h2 {
+      margin: 0 0 6px;
+      font-size: 18px;
+      line-height: 1.35;
+      color: var(--text);
+    }
+
+    .feedback-header p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .feedback-close {
+      width: 36px;
+      height: 36px;
+      border: 0;
+      border-radius: 999px;
+      background: #f5f7fb;
+      color: var(--muted);
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .feedback-close:hover {
+      background: #edf2f7;
+      color: var(--text);
+    }
+
+    .feedback-body {
+      flex: 1;
+      padding: 16px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .feedback-note {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.65;
+      color: #52637d;
+      background: #f8fbff;
+      border: 1px solid #e3edf8;
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+
+    .feedback-frame-wrap {
+      flex: 1;
+      min-height: 360px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    .feedback-frame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #ffffff;
+    }
+
+    .feedback-empty {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: left;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.75;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    }
+
+    .feedback-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .feedback-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(69, 198, 47, 0.18);
+      background: rgba(69, 198, 47, 0.1);
+      color: #1b6d2d;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .feedback-link:hover {
+      background: rgba(69, 198, 47, 0.16);
+    }
+
+    .feedback-link.is-hidden {
+      display: none;
+    }
+
     @media (max-width: 1120px) {
       .page {
         grid-template-columns: 1fr;
@@ -459,6 +652,24 @@
       .overview-grid {
         grid-template-columns: 1fr;
       }
+
+      .feedback-fab {
+        right: 16px;
+        bottom: 16px;
+      }
+
+      .feedback-panel {
+        top: auto;
+        right: 12px;
+        bottom: 12px;
+        left: 12px;
+        width: auto;
+        height: min(78vh, 720px);
+      }
+
+      .feedback-body {
+        padding: 14px 16px 16px;
+      }
     }
 
     @media print {
@@ -474,6 +685,11 @@
       }
 
       .toc {
+        display: none;
+      }
+
+      .feedback-fab,
+      .feedback-overlay {
         display: none;
       }
 
@@ -563,6 +779,37 @@
     </main>
   </div>
 
+  <div class="feedback-fab">
+    <button type="button" class="feedback-trigger" data-feedback-open aria-haspopup="dialog" aria-controls="feedback-overlay">
+      文档反馈
+    </button>
+  </div>
+
+  <div class="feedback-overlay" id="feedback-overlay" hidden>
+    <section class="feedback-panel" role="dialog" aria-modal="true" aria-labelledby="feedback-title">
+      <div class="feedback-header">
+        <div>
+          <h2 id="feedback-title">文档反馈</h2>
+          <p>发现错别字、信息遗漏或表达不清时，欢迎直接提交，方便团队及时修正。</p>
+        </div>
+        <button type="button" class="feedback-close" data-feedback-close aria-label="关闭反馈面板">×</button>
+      </div>
+      <div class="feedback-body">
+        <p class="feedback-note" id="feedback-note">提交前可尽量写清问题位置、原文内容和建议修改方式，方便快速处理。</p>
+        <div class="feedback-frame-wrap" id="feedback-frame-wrap">
+          <iframe class="feedback-frame" id="feedback-frame" title="文档反馈表单" loading="lazy" referrerpolicy="no-referrer"></iframe>
+          <div class="feedback-empty" id="feedback-empty" hidden>
+            当前还没有配置飞书反馈表单链接。<br />
+            将页面脚本中的 <code>FEEDBACK_FORM_URL</code> 替换为真实表单地址后，这里会自动显示可提交的反馈入口。
+          </div>
+        </div>
+        <div class="feedback-actions">
+          <a class="feedback-link is-hidden" id="feedback-link" target="_blank" rel="noreferrer noopener">在新窗口打开反馈表单</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
   <script id="md-source" type="text/plain"># AI视频全流程生产SOP（通用版 V 1.0）
 
 ## 一、项目概览
@@ -632,7 +879,10 @@
 
 这一章按实际制作顺序展开，开工后可以直接按阶段往下看。
 
-配套教程：`Lib TV` 使用教程可参考 [飞书文档](https://resonate.feishu.cn/wiki/Loxfw6XHziYRk0kKzdjcFfp9nhb?from=from_copylink)。
+配套教程：
+- `Lib TV` 使用教程：[飞书文档](https://resonate.feishu.cn/wiki/Loxfw6XHziYRk0kKzdjcFfp9nhb?from=from_copylink)
+- `即梦 Seedance 2.0` 教程：[飞书文档](https://bytedance.larkoffice.com/wiki/A5RHwWhoBiOnjukIIw6cu5ybnXQ?from=from_copylink)
+- `可灵 O3` 教程：[轻雀文档](https://docs.qingque.cn/d/home/eZQAit38w9iv2rOZ3k0CXYYn-?identityId=2Ha76zGX5gS)
 
 ### 1. 分镜脚本
 
@@ -1125,6 +1375,9 @@
       return { html, toc };
     }
 
+    const FEEDBACK_FORM_URL = "https://my.feishu.cn/share/base/form/shrcnuWLvLOvcblxKFFQavmgDE4";
+    const FEEDBACK_FALLBACK_URL = FEEDBACK_FORM_URL;
+
     const md = document.getElementById("md-source").textContent.trim();
     const { html, toc } = parseMarkdown(md);
 
@@ -1181,6 +1434,64 @@
     );
 
     headings.forEach(heading => observer.observe(heading));
+
+    const feedbackOverlay = document.getElementById("feedback-overlay");
+    const feedbackOpenButton = document.querySelector("[data-feedback-open]");
+    const feedbackCloseButton = document.querySelector("[data-feedback-close]");
+    const feedbackFrame = document.getElementById("feedback-frame");
+    const feedbackEmpty = document.getElementById("feedback-empty");
+    const feedbackLink = document.getElementById("feedback-link");
+
+    function hasFeedbackUrl(url) {
+      return Boolean(url && /^https?:\/\//.test(url));
+    }
+
+    function openFeedback() {
+      feedbackOverlay.hidden = false;
+      requestAnimationFrame(() => {
+        feedbackOverlay.classList.add("is-open");
+        document.body.classList.add("feedback-open");
+      });
+    }
+
+    function closeFeedback() {
+      feedbackOverlay.classList.remove("is-open");
+      document.body.classList.remove("feedback-open");
+      window.setTimeout(() => {
+        if (!feedbackOverlay.classList.contains("is-open")) {
+          feedbackOverlay.hidden = true;
+        }
+      }, 220);
+    }
+
+    if (hasFeedbackUrl(FEEDBACK_FORM_URL)) {
+      feedbackFrame.src = FEEDBACK_FORM_URL;
+      feedbackFrame.hidden = false;
+      feedbackEmpty.hidden = true;
+    } else {
+      feedbackFrame.hidden = true;
+      feedbackEmpty.hidden = false;
+    }
+
+    const feedbackOpenUrl = FEEDBACK_FALLBACK_URL || FEEDBACK_FORM_URL;
+    if (hasFeedbackUrl(feedbackOpenUrl)) {
+      feedbackLink.href = feedbackOpenUrl;
+      feedbackLink.classList.remove("is-hidden");
+    }
+
+    feedbackOpenButton.addEventListener("click", openFeedback);
+    feedbackCloseButton.addEventListener("click", closeFeedback);
+    feedbackOverlay.addEventListener("click", event => {
+      if (event.target === feedbackOverlay) {
+        closeFeedback();
+      }
+    });
+
+    window.addEventListener("keydown", event => {
+      if (event.key === "Escape" && feedbackOverlay.classList.contains("is-open")) {
+        closeFeedback();
+      }
+    });
   </script>
 </body>
 </html>
