@@ -1,0 +1,12 @@
+.DS_Store
+__pycache__/
+.venv/
+.tools/
+
+frames/
+frames_detail/
+frames_end/
+frames_real/
+
+*.mp4
+*.zip

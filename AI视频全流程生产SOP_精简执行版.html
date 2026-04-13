@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI视频全流程生产SOP（精简执行版）</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: rgba(255, 255, 255, 0.94);
+      --panel-2: #ffffff;
+      --text: #172033;
+      --muted: #66758f;
+      --line: #e5ecf5;
+      --accent: #17bebb;
+      --accent-2: #f59e0b;
+      --accent-3: #60a5fa;
+      --accent-soft: rgba(23, 190, 187, 0.12);
+      --warning-soft: rgba(245, 158, 11, 0.12);
+      --blue-soft: rgba(96, 165, 250, 0.12);
+      --code: #0f172a;
+      --shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+      --shadow-soft: 0 10px 28px rgba(15, 23, 42, 0.05);
+      --radius: 18px;
+      --content-width: 1020px;
+      --toc-width: 250px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(23, 190, 187, 0.1), transparent 26%),
+        radial-gradient(circle at top right, rgba(96, 165, 250, 0.12), transparent 24%),
+        linear-gradient(180deg, #f7f9fc 0%, #f2f6fb 100%);
+      min-height: 100vh;
+    }
+
+    .page {
+      display: grid;
+      grid-template-columns: var(--toc-width) minmax(0, var(--content-width));
+      gap: 24px;
+      max-width: calc(var(--toc-width) + var(--content-width) + 80px);
+      margin: 0 auto;
+      padding: 28px 24px 48px;
+    }
+
+    .toc {
+      position: sticky;
+      top: 20px;
+      align-self: start;
+      max-height: calc(100vh - 40px);
+      overflow: auto;
+      padding: 18px 16px 14px;
+      background: var(--panel);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .toc h2 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      letter-spacing: 0.02em;
+      color: var(--text);
+    }
+
+    .toc-list {
+      display: grid;
+      gap: 5px;
+    }
+
+    .toc a {
+      display: block;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      line-height: 1.45;
+      padding: 8px 10px;
+      border-radius: 12px;
+      transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    }
+
+    .toc a.level-2 {
+      color: var(--text);
+      font-weight: 600;
+      margin-top: 6px;
+    }
+
+    .toc a.level-3 {
+      padding-left: 20px;
+    }
+
+    .toc a.level-4 {
+      padding-left: 30px;
+      font-size: 12px;
+    }
+
+    .toc a:hover,
+    .toc a.active {
+      color: var(--text);
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.08), rgba(23, 190, 187, 0.12));
+      transform: translateX(2px);
+    }
+
+    .main {
+      min-width: 0;
+    }
+
+    .hero {
+      padding: 34px 34px 28px;
+      margin-bottom: 18px;
+      background:
+        linear-gradient(135deg, rgba(10, 31, 54, 0.97), rgba(7, 71, 73, 0.92)),
+        radial-gradient(circle at right top, rgba(34, 211, 238, 0.28), transparent 30%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.03) 100%),
+        radial-gradient(circle at 80% 20%, rgba(34, 211, 238, 0.25), transparent 22%);
+      pointer-events: none;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 38px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 720px;
+      color: rgba(255, 255, 255, 0.76);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .chip {
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: #eef8ff;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .overview-card {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px 16px 14px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .overview-card .eyebrow {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .overview-card strong {
+      display: block;
+      font-size: 17px;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .overview-card span {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .content {
+      display: grid;
+      gap: 18px;
+    }
+
+    .content h1:first-child {
+      display: none;
+    }
+
+    .content h2,
+    .content h3,
+    .content h4 {
+      scroll-margin-top: 16px;
+    }
+
+    .section-card {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow-soft);
+      padding: 28px 28px 22px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .section-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 5px;
+      background: linear-gradient(180deg, var(--card-accent, var(--accent)), transparent 85%);
+    }
+
+    .section-card.section-1 { --card-accent: var(--accent); }
+    .section-card.section-2 { --card-accent: #22c55e; }
+    .section-card.section-3 { --card-accent: var(--accent-2); }
+    .section-card.section-4 { --card-accent: var(--accent-3); }
+
+    .content h2 {
+      margin: 0 0 14px;
+      padding: 0;
+      font-size: 28px;
+      line-height: 1.2;
+      border-top: 0;
+    }
+
+    .content h3 {
+      margin: 22px 0 12px;
+      font-size: 20px;
+      line-height: 1.35;
+      color: var(--text);
+    }
+
+    .content h4 {
+      margin: 18px 0 10px;
+      font-size: 16px;
+      line-height: 1.4;
+      color: #33517a;
+    }
+
+    .content p {
+      margin: 10px 0 14px;
+      color: #334155;
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    .content ul,
+    .content ol {
+      margin: 10px 0 16px;
+      padding-left: 24px;
+    }
+
+    .content li {
+      margin: 7px 0;
+      line-height: 1.75;
+      color: #334155;
+    }
+
+    .content hr {
+      border: 0;
+      height: 1px;
+      background: #edf2f7;
+      margin: 28px 0;
+    }
+
+    .content code {
+      font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+      font-size: 0.92em;
+      color: #0f4c81;
+      background: #f2f7fc;
+      border: 1px solid #dbe7f3;
+      border-radius: 8px;
+      padding: 0.16em 0.4em;
+    }
+
+    .content pre {
+      margin: 14px 0 18px;
+      padding: 16px 18px;
+      overflow: auto;
+      background: #f59e0b;
+      border: 1px solid rgba(180, 83, 9, 0.18);
+      border-radius: 16px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    }
+
+    .content pre code {
+      background: transparent;
+      border: 0;
+      padding: 0;
+      color: #1f2937;
+      font-size: 13px;
+      line-height: 1.65;
+      font-weight: 500;
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 18px;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid #e3eaf3;
+      background: #fcfdff;
+      display: block;
+      overflow-x: auto;
+    }
+
+    .content thead {
+      background: #f5f8fc;
+    }
+
+    .content th,
+    .content td {
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+      white-space: nowrap;
+      font-size: 14px;
+      color: #334155;
+    }
+
+    .content tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .section-note {
+      margin: 10px 0 16px;
+      padding: 12px 14px;
+      color: #52637d;
+      border-left: 3px solid var(--accent);
+      background: #f4fbfb;
+      border-radius: 0 12px 12px 0;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .section-card .section-note {
+      margin-top: 0;
+    }
+
+    .toc-divider {
+      height: 1px;
+      background: var(--line);
+      margin: 12px 0;
+    }
+
+    @media (max-width: 1120px) {
+      .page {
+        grid-template-columns: 1fr;
+        max-width: 960px;
+      }
+
+      .toc {
+        position: relative;
+        top: 0;
+        max-height: none;
+      }
+
+      .overview-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 16px 12px 28px;
+      }
+
+      .hero,
+      .toc {
+        padding: 18px 16px;
+      }
+
+      .section-card {
+        padding: 22px 18px 18px;
+      }
+
+      .hero h1 {
+        font-size: 28px;
+      }
+
+      .content h2 {
+        font-size: 22px;
+      }
+
+      .content h3 {
+        font-size: 18px;
+      }
+
+      .overview-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        color: #111827;
+      }
+
+      .page {
+        display: block;
+        max-width: none;
+        padding: 0;
+      }
+
+      .toc {
+        display: none;
+      }
+
+      .hero,
+      .content,
+      .section-card,
+      .overview-card {
+        box-shadow: none;
+        border: 0;
+        background: #fff;
+        color: #111827;
+      }
+
+      .content p,
+      .content li,
+      .content th,
+      .content td {
+        color: #111827;
+      }
+
+      .content code,
+      .content pre {
+        color: #111827;
+        background: #f8fafc;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <aside class="toc">
+      <h2>目录导航</h2>
+      <div class="toc-divider"></div>
+      <nav id="toc-list" class="toc-list"></nav>
+    </aside>
+
+    <main class="main">
+      <section class="hero">
+        <h1>AI视频全流程生产SOP（精简执行版）</h1>
+        <p>面向 AI 视频制作者的执行型页面。重点突出流程、模板、审核与关键方法，适合日常查阅、内部同步和投屏展示。</p>
+        <div class="chips">
+          <span class="chip">图生视频优先</span>
+          <span class="chip">分阶段执行</span>
+          <span class="chip">提示词五维坐标系</span>
+          <span class="chip">审核口径统一</span>
+        </div>
+      </section>
+
+      <section class="overview-grid" aria-label="文档导览">
+        <div class="overview-card">
+          <div class="eyebrow">项目对象</div>
+          <strong>AI视频制作者</strong>
+          <span>覆盖剧情短片、IP动画，支持双人协作和单人全流程。</span>
+        </div>
+        <div class="overview-card">
+          <div class="eyebrow">核心流程</div>
+          <strong>从分镜到交付</strong>
+          <span>分镜、生图、生视频、音画、剪辑、导出，按阶段执行。</span>
+        </div>
+        <div class="overview-card">
+          <div class="eyebrow">关键方法</div>
+          <strong>五维坐标系</strong>
+          <span>用统一的提示词和审核口径控制动作、运镜、光影与风格。</span>
+        </div>
+        <div class="overview-card">
+          <div class="eyebrow">模板附录</div>
+          <strong>可直接复制使用</strong>
+          <span>提供分镜、生图和图生视频模板，便于团队快速执行。</span>
+        </div>
+      </section>
+
+      <article id="content" class="content"></article>
+    </main>
+  </div>
+
+  <script id="md-source" type="text/plain"># AI视频全流程生产SOP（精简执行版）
+
+## 一、项目概览
+
+用于快速了解适用对象、交付范围、目录结构和整体流程。
+
+### 1. 适用范围
+- 适用对象：`AI视频制作者`
+- 视频类型：`剧情短片`、`IP动画`
+- 常见时长：`1分30秒-2分钟`
+- 项目模式：`1导演 + 1制作` 或 `单人全流程制作`
+- 核心平台：`Lib TV`
+- 后期工具：`剪映 / PR / AE`
+
+### 2. 目标与交付
+
+#### 流程起点与终点
+- 起点：`分镜脚本`
+- 终点：`成片交付`
+
+#### 核心交付物
+- `分镜脚本`
+- `原画关键帧`
+- `原画工程文件`
+- `动画工程文件`
+- `成片`
+
+#### 标准目录结构
+```text
+01分镜脚本
+02原画
+03动画
+04成片
+05工程文件（原画、动画）
+```
+
+### 3. 标准流程
+
+```text
+脚本分镜 -> 审核 -> 生图 -> 审核 -> 生视频 -> 配音/音画同出 -> 剪辑 -> 导出 -> 审核
+```
+
+审核节点：
+- `自审`
+- `导演审`
+- `教研审`
+
+## 二、生产执行
+
+用于实际开工时逐阶段查看执行要求、审核重点和风险提示。
+
+### 1. 分镜脚本
+
+#### 分镜模版
+- `镜号`
+- `时长`
+- `景别`
+- `角色`
+- `场景`
+- `画面描述`
+- `情绪`
+- `光影氛围`
+- `对白`
+- `分镜提示词`
+- `视频运动提示词`
+
+#### 执行要求
+- 每个镜头只承载一个清晰核心动作
+- 前后镜头提前考虑衔接
+- 关键转场、关键动作、关键表演镜头单独标记
+- 高风险真人镜头提前评估
+
+#### 审核重点
+- 叙事是否成立
+- 镜头逻辑是否清晰
+- 镜头衔接是否自然
+- 是否适合 AI 生成
+- 是否提前考虑角色一致性与场景统一性
+
+---
+
+### 2. 生图
+
+#### 生图提示词基础结构
+```text
+主体 + 场景 + 风格 + 构图 + 光影 + 细节 + 负面词（可选）
+```
+
+#### 执行要求
+- 先做角色设定图，再扩镜头图
+- 先做场景设定图，再批量生成
+- 同一角色、同一场景尽量复用稳定设定
+- 生图时优先检查主体、场景光影、风格约束、无效修饰词，以及是否重复描述设定图已有信息
+- 执行口径：先做设定，再扩镜头；先保主体，再保风格；先保一致性，再追求复杂效果
+
+#### 角色一致性方法
+- 角色设定图
+- 场景设定图
+- `nanobanana` 进行关键帧合成、编辑
+- `PS` 进行细节处理，作为最后调整手段
+
+#### 审核重点
+- 角色一致性
+- 场景是否统一
+- 构图是否支撑后续生视频
+- 光影氛围是否准确
+- 提示词是否存在明显信息堆砌
+- 是否主体不清
+- 是否重复描述设定图已有内容
+- 是否存在明显融化、畸变、穿帮、结构错误
+
+---
+
+### 3. 生视频
+
+#### 执行要求
+- 严格按分镜逐镜生成，不盲目抽卡
+- 先做重点镜头测试，再推进批量生产
+- 先判断这一镜的核心目标是动作、表演还是运镜，再决定提示词写法
+- 先确定五维中的主维度，再补充必要信息
+- 能用纯镜头命令解决的，不额外堆砌描述
+- 口型镜头、真人镜头、连续动作镜头单独重点验证
+- 图生视频前必须确认输入图清晰稳定；若不满足要求，则退回生图阶段处理
+
+#### 审核重点
+- 动作是否自然
+- 角色是否稳定
+- 镜头运动是否符合预期
+- 前后镜头是否可拼接
+- 画质是否达标
+- 口型是否可用
+- 是否存在模板套用痕迹过重
+- 是否可以改成更短、更稳定的镜头命令
+- 是否存在明显 AI 感
+
+#### 已知风险
+- `seedance 2.0` 排队时间长，需提前安排产能
+- `可灵 o3` 支持真人，但口型仍有偏差
+- `seedance 2.0` 中真人角色有绕过审核的方法，但会牺牲画质
+- 镜头衔接问题优先在分镜阶段解决，后期可通过 `seedance 2.0` 延长视频、轨道补全等方式补救
+
+---
+
+### 4. 配音 / 音画同出
+
+#### 执行要求
+- 配音内容与分镜脚本一致
+- 台词长度匹配镜头时长
+- 角色声线前后一致
+- 口型镜头优先校对发音节奏
+- 当前大部分模型支持音画同出，可优先评估是否直接生成
+- 需要稳定角色声线时，可直接提供音色参考
+- 音画同出时，不建议直接生成配乐
+- 音效可根据画面内容同期生成
+- 配乐建议后期通过素材库匹配，或用 `Suno`、`剪映` 单独生成后适配
+- 若音画同出不稳定，再回退到单独配音或后期补配
+
+#### 审核重点
+- 情绪是否准确
+- 吐字是否清晰
+- 节奏是否匹配画面
+- 是否存在明显音画不一致
+
+---
+
+### 5. 剪辑
+
+#### 执行要求
+- 按分镜顺序完成镜头拼接
+- 修正节奏问题和镜头衔接问题
+- 补齐字幕、BGM、音效
+- 对必要镜头做补帧、裁切、转场、局部修饰
+- 保留工程文件，确保返修可追溯
+
+#### 审核重点
+- 节奏是否顺畅
+- 镜头切换是否自然
+- 字幕是否完整准确
+- BGM 和音效是否服务内容
+- 成片是否达到可交付标准
+
+---
+
+### 6. 导出与归档
+
+#### 导出前确认
+- 分镜脚本为最终版
+- 原画素材齐全
+- 动画素材命名清晰
+- 成片输出版本正确
+- 工程文件可打开、可复用
+- 配音、BGM、字幕均在工程文件中完整归档
+
+## 三、方法与审核
+
+用于统一生成思路、审核口径和团队判断标准。
+
+### 1. 提示词五维坐标系
+
+用于写提示词、做图、做视频时快速判断“该把注意力放在哪里”。
+
+#### 五维内容
+- `绝对主体与物理动势`：主体是谁，做什么，动作是否成立
+- `环境场与情绪光影`：场景、情绪、光线、氛围
+- `时间轴与状态演变`：前状态、变化过程、后状态
+- `光学与摄影机调度`：机位、景别、运镜
+- `美学介质与底层约束`：风格、参考图、模型能力边界
+
+### 2. 执行原则
+
+#### 原则一：做减法
+- 先写最重要的 1-3 个核心点
+- 次要信息能删就删
+- 与参考图重复的信息能删就删
+- 画面失控时先删词，不先加词
+
+#### 原则二：别乱套模板
+- 模板只保留结构，不照搬内容
+- 不同镜头目标不用同一长模板硬套
+- 先问“这一镜到底要解决什么”，再决定写什么
+
+#### 原则三：纯镜头命令也能出高级感
+- 基础画面已成立时，可直接用镜头命令驱动
+- 镜头命令尽量单一清晰
+- 高级感更多来自调度清晰，而不是提示词华丽
+
+#### 原则四：图生视频先保图片清晰度
+- 输入图不清晰，不直接生视频
+- 主体轮廓、五官、手部、服装关键结构必须清楚
+- 图不清晰先修图，图不稳定先重生图
+
+### 3. 审核机制
+
+#### 自审
+制作人按以下维度全项检查：
+- 角色一致性
+- 镜头衔接
+- 画面质量
+- 叙事清晰度
+- AI 感
+- 素材完整性
+
+#### 导演审
+重点判断：
+- 叙事是否成立
+- 表演是否可信
+- 镜头语言是否有效
+- 情绪和节奏是否准确
+- 成片完成度是否达标
+
+#### 教研审
+重点判断：
+- 内容表达是否准确
+- 项目方向是否符合目标
+- 是否满足对外传播或教学要求
+- 是否具备最终交付条件
+
+### 4. 核心审核标准
+
+#### 角色一致性
+- 脸型是否稳定
+- 发型是否稳定
+- 服装是否稳定
+- 配色是否稳定
+- 年龄感和身份感是否稳定
+
+#### 镜头衔接
+- 前后镜头动作是否能接上
+- 视线方向是否连贯
+- 构图关系是否合理
+- 情绪是否连续
+- 转场是否自然
+
+#### 画面质量
+- 主体是否清晰
+- 细节是否完整
+- 是否存在融化、变形、结构错误
+- 光影是否自然
+- 整体质感是否统一
+
+#### 叙事清晰度
+- 镜头是否推动情节
+- 信息是否易理解
+- 节奏是否拖沓
+- 关键情节是否明确
+- 观众是否能顺畅看懂
+
+#### 无AI感
+- 人物动作是否自然
+- 表情是否可信
+- 镜头是否像“拍出来”而不是“拼出来”
+- 画面是否避免明显模型痕迹
+- 整体观感是否真实、顺滑、统一
+
+## 四、模板附录
+
+用于直接复制模板开展分镜、生图和图生视频工作。
+
+### 1. 分镜模板
+| 镜号 | 时长 | 景别 | 角色 | 场景 | 画面描述 | 情绪 | 光影氛围 | 对白 | 分镜提示词 | 视频运动提示词 |
+|---|---|---|---|---|---|---|---|---|---|---|
+
+### 2. 生图提示词模板
+```text
+主体：
+场景：
+风格：
+构图：
+光影：
+细节：
+负面词（可选）：
+```
+
+### 3. 视频运动提示词模板
+
+项目中大部分时间使用的是图生视频，风格、光影氛围通常已经确认，以下模板主要用于补充镜头运动与画面变化信息。
+
+```text
+运镜：参照物 + 运动幅度
+主体运动：起始状态 + 动作/表情变化 + 结束状态
+场景运动：
+光影变化（可填）：
+```</script>
+
+  <script>
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function slugify(text) {
+      return text
+        .toLowerCase()
+        .replace(/[`]/g, "")
+        .replace(/[^\u4e00-\u9fa5a-z0-9\s-]/g, "")
+        .trim()
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-") || "section";
+    }
+
+    function formatInline(text) {
+      let html = escapeHtml(text);
+      html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
+      return html;
+    }
+
+    function parseTable(lines, start) {
+      const tableLines = [];
+      let i = start;
+      while (i < lines.length && /^\|.*\|$/.test(lines[i].trim())) {
+        tableLines.push(lines[i].trim());
+        i++;
+      }
+      if (tableLines.length < 2) {
+        return null;
+      }
+      const header = tableLines[0].split("|").slice(1, -1).map(cell => cell.trim());
+      const separator = tableLines[1].split("|").slice(1, -1).every(cell => /^:?-+:?$/.test(cell.trim()));
+      if (!separator) {
+        return null;
+      }
+      const rows = tableLines.slice(2).map(line => line.split("|").slice(1, -1).map(cell => cell.trim()));
+      let html = "<table><thead><tr>";
+      header.forEach(cell => {
+        html += `<th>${formatInline(cell)}</th>`;
+      });
+      html += "</tr></thead><tbody>";
+      rows.forEach(row => {
+        html += "<tr>";
+        row.forEach(cell => {
+          html += `<td>${formatInline(cell)}</td>`;
+        });
+        html += "</tr>";
+      });
+      html += "</tbody></table>";
+      return { html, nextIndex: i };
+    }
+
+    function parseMarkdown(md) {
+      const lines = md.replace(/\r\n/g, "\n").split("\n");
+      const toc = [];
+      const usedIds = new Map();
+      let html = "";
+      let i = 0;
+
+      function uniqueId(base) {
+        const count = usedIds.get(base) || 0;
+        usedIds.set(base, count + 1);
+        return count === 0 ? base : `${base}-${count + 1}`;
+      }
+
+      while (i < lines.length) {
+        const line = lines[i];
+        const trimmed = line.trim();
+
+        if (!trimmed) {
+          i++;
+          continue;
+        }
+
+        if (/^```/.test(trimmed)) {
+          const lang = trimmed.slice(3).trim();
+          const codeLines = [];
+          i++;
+          while (i < lines.length && !/^```/.test(lines[i].trim())) {
+            codeLines.push(lines[i]);
+            i++;
+          }
+          i++;
+          html += `<pre><code class="language-${escapeHtml(lang)}">${escapeHtml(codeLines.join("\n"))}</code></pre>`;
+          continue;
+        }
+
+        if (/^---+$/.test(trimmed)) {
+          html += "<hr />";
+          i++;
+          continue;
+        }
+
+        const headingMatch = /^(#{1,4})\s+(.*)$/.exec(trimmed);
+        if (headingMatch) {
+          const level = headingMatch[1].length;
+          const text = headingMatch[2].trim();
+          const id = uniqueId(slugify(text));
+          html += `<h${level} id="${id}">${formatInline(text)}</h${level}>`;
+          if (level >= 2 && level <= 4) {
+            toc.push({ level, text, id });
+          }
+          i++;
+          continue;
+        }
+
+        const tableResult = parseTable(lines, i);
+        if (tableResult) {
+          html += tableResult.html;
+          i = tableResult.nextIndex;
+          continue;
+        }
+
+        if (/^- /.test(trimmed)) {
+          const items = [];
+          while (i < lines.length && /^- /.test(lines[i].trim())) {
+            items.push(lines[i].trim().slice(2));
+            i++;
+          }
+          html += "<ul>";
+          items.forEach(item => {
+            html += `<li>${formatInline(item)}</li>`;
+          });
+          html += "</ul>";
+          continue;
+        }
+
+        const paragraphLines = [trimmed];
+        i++;
+        while (i < lines.length) {
+          const next = lines[i].trim();
+          if (!next || /^#{1,4}\s+/.test(next) || /^```/.test(next) || /^\|.*\|$/.test(next) || /^- /.test(next) || /^---+$/.test(next)) {
+            break;
+          }
+          paragraphLines.push(next);
+          i++;
+        }
+
+        const paragraph = paragraphLines.join(" ");
+        if (/^用于/.test(paragraph)) {
+          html += `<div class="section-note">${formatInline(paragraph)}</div>`;
+        } else {
+          html += `<p>${formatInline(paragraph)}</p>`;
+        }
+      }
+
+      return { html, toc };
+    }
+
+    const md = document.getElementById("md-source").textContent.trim();
+    const { html, toc } = parseMarkdown(md);
+
+    const content = document.getElementById("content");
+    content.innerHTML = html;
+
+    const topLevelSections = [...content.querySelectorAll("h2")];
+    topLevelSections.forEach((heading, index) => {
+      const section = document.createElement("section");
+      section.className = `section-card section-${(index % 4) + 1}`;
+      heading.parentNode.insertBefore(section, heading);
+      section.appendChild(heading);
+
+      let next = section.nextSibling;
+      while (next && !(next.nodeType === 1 && next.tagName === "H2")) {
+        const current = next;
+        next = next.nextSibling;
+        section.appendChild(current);
+      }
+    });
+
+    const tocList = document.getElementById("toc-list");
+    toc.forEach(item => {
+      const a = document.createElement("a");
+      a.href = `#${item.id}`;
+      a.textContent = item.text;
+      a.className = `level-${item.level}`;
+      tocList.appendChild(a);
+    });
+
+    const tocLinks = [...document.querySelectorAll(".toc a")];
+    const headings = toc
+      .map(item => document.getElementById(item.id))
+      .filter(Boolean);
+
+    const observer = new IntersectionObserver(
+      entries => {
+        const visible = entries
+          .filter(entry => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+
+        if (!visible) {
+          return;
+        }
+
+        tocLinks.forEach(link => {
+          link.classList.toggle("active", link.getAttribute("href") === `#${visible.target.id}`);
+        });
+      },
+      {
+        rootMargin: "-20% 0px -70% 0px",
+        threshold: 0
+      }
+    );
+
+    headings.forEach(heading => observer.observe(heading));
+  </script>
+</body>
+</html>
