@@ -407,4 +407,4 @@
 这里放实际项目的教程入口，后续会持续补充。
 
 ### 教程入口
-- [示例项目A教程](tutorials/example-project-a.html)
+- [策略视频口语技能教程](tutorials/strategy-video-speaking-skill/index.html)
